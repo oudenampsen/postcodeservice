@@ -27,7 +27,7 @@ function check(req, res) {
       console.log(response);
       res.json(errorResponse);
     }
-    console.log('>>>>>' + res._headers['x-response-time']);
+    console.log('>>>>>>' + res._headers['x-response-time']);
 
   });
 
