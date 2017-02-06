@@ -1,0 +1,108 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Postcode service
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths 
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /ping:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: hello_world
+    get:
+      description: Een ping, om te zien of de service draait
+      # used as the method name of the controller
+      operationId: hello
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /postcodes:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: postcodeController
+    get:
+      description: |
+        Geeft een volledig adres terug voor een 
+        postcode huisnummer combinatie 
+      # used as the method name of the controller
+      operationId: check
+      parameters:
+        - name: zipcode
+          in: query
+          description: De postcode
+          required: true
+          type: string
+        - name: housenumber
+          in: query
+          description: Het huisnummer
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/address"
+        "404":
+          description: Not found
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ErrorResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  HelloWorldResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  address:
+    required:
+      - street
+      - zipcode
+      - housenumber
+      - city
+      - countryCode
+    properties:
+      street:
+        type: string
+      housenumber:
+        type: string
+      zipcode:
+        type: string
+      city:
+        type: string
+      countryCode:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
